@@ -1,5 +1,25 @@
 # Ping Warden Worklog
 
+## 2026-09-12 - Publish 4.1.7 with the dialog-over-game fix
+
+**What changed**: 4.1.7 / 41700 from `fe649da`. A system dialog appearing over a game no longer makes Game Mode auto-detect drop protection. The "New since 4.0" section carries forward in the notes.
+
+**What the investigation found**: The observation logged earlier today on [#64](https://github.com/oliverames/ping-warden/issues/64) turned out to be a real defect. A listener on `NSWorkspace.didActivateApplicationNotification`, the same event the detector uses, saw GeForce NOW activate, then `com.apple.UserNotificationCenter` when its first-launch notification prompt appeared, then the game again. The detector took the prompt as the new frontmost app, so `frontmostIsGame` went false, and with Screen Recording absent the fullscreen path could not hold the game present. Two inactive samples at the 2-second cadence later, protection turned off, then flapped back on when the prompt closed. That is the interruption the feature exists to prevent, and a permission prompt or password sheet over a game is a normal event.
+
+**Fix**: `GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier:)` ignores activation from `UserNotificationCenter`, `SecurityAgent`, and the notification and Control Center overlays, mirroring `ignoredFullscreenOwners`. Only `UserNotificationCenter` was reproduced; the rest are the same family. Four new policy tests, 138 total.
+
+**Stale-language scan**: Nothing in the app needed a copy change. The Automation pane, its permission alert, and the accessibility hints were fixed in 4.1.1 and read correctly. The "Before 4.1.6" lines on the homepage, README, and upgrade guide are accurate history. Donate surfaces were reviewed on 2026-09-06 and kept deliberately. The dated files under `docs/` are audit records and were left alone.
+
+**Verification**: Release published and not a draft. Public DMG is 5,806,041 bytes with SHA-256 `cf561e9a...` matching GitHub's recorded digest; the app inside reports 4.1.7 / 41700, Gatekeeper accepts it as Notarized Developer ID, and the ticket validates. Both live feeds lead with 4.1.7, carry an enclosure length matching the asset, include the "New since 4.0" section in the 4.1.7 item, and verify against the app's embedded public key with `scripts/verify_sparkle.swift`. Gumroad buyer content embeds exactly one DMG, `PingWarden-4.1.7.dmg`, with the license-key block preserved. Sentry finalized `com.amesvt.pingwarden@4.1.7`. 138 core tests pass, 9 release-tool tests pass, and the unsigned Release build succeeded before the archive.
+
+**Decisions made**: Did not ship 4.1.7 as a notes-only release. With no code change since 4.1.6 the update prompt would have cost every active install a restart for nothing, so the release waited until the live test produced a defect worth shipping. Left [#64](https://github.com/oliverames/ping-warden/issues/64) open: the engage handoff and the wired path in the field are still unexercised.
+
+**Left off at**: 4.1.7 live on both feeds, GitHub, and Gumroad on September 13, 2026 at approximately 01:48 UTC (the evening of September 12 locally). Signed feed copies committed on main as `453516c`.
+
+**Open questions**: [#64](https://github.com/oliverames/ping-warden/issues/64) still wants the interactive game session. Whether the 4.0 notice moves acceptance among 4.0.x installs; `python3 scripts/download_stats.py --snapshot` in a few days. The other four bundle identifiers in `transientSystemUIBundleIdentifiers` are inferred, not reproduced; a SecurityAgent password sheet over a game would confirm the second most likely one.
+
+---
+
 ## 2026-09-12 - Verify game auto-detect and surface it to 4.0 users
 
 **What changed**: Added a "New since 4.0" section to the 4.1.6 release notes describing the frontmost-app Game Mode detection and the Ethernet skip, re-rendered it into `appcast.xml` and `appcast-beta.xml`, re-signed both feeds, published to gh-pages, and updated the v4.1.6 GitHub release body from the same source text.
