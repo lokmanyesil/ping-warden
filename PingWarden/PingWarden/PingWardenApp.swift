@@ -3017,7 +3017,9 @@ final class GameModeDetector: @unchecked Sendable {
             log.warning("Screen Recording permission not granted - fullscreen game detection unavailable, frontmost-app detection still active")
         }
 
-        let initialFrontmostPID = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        let initialFrontmost = NSWorkspace.shared.frontmostApplication
+        let initialFrontmostPID = GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: initialFrontmost?.bundleIdentifier)
+            ? initialFrontmost?.processIdentifier : nil
         detectionQueue.async { [weak self] in
             guard let self else { return }
             self.isRunning = true
@@ -3053,7 +3055,15 @@ final class GameModeDetector: @unchecked Sendable {
                 object: nil,
                 queue: .main
             ) { [weak self] notification in
-                let pid = (notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication)?.processIdentifier
+                let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+                // A permission prompt or password sheet over a game activates
+                // briefly without the user leaving the game. Keep the game as
+                // the tracked frontmost app so protection does not drop and
+                // flap back when the dialog closes.
+                guard GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: app?.bundleIdentifier) else {
+                    return
+                }
+                let pid = app?.processIdentifier
                 self?.detectionQueue.async { [weak self] in
                     self?.frontmostPID = pid
                 }

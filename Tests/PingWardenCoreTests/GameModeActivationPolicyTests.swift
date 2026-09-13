@@ -12,6 +12,26 @@ import XCTest
 
 final class GameModeActivationPolicyTests: XCTestCase {
 
+    // MARK: - shouldTrackActivation
+
+    func testGameActivationIsTracked() {
+        XCTAssertTrue(GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: "com.nvidia.gfnpc.mall"))
+    }
+
+    func testPermissionPromptActivationIsIgnored() {
+        XCTAssertFalse(GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: "com.apple.UserNotificationCenter"))
+    }
+
+    func testEveryTransientSystemProcessIsIgnored() {
+        for identifier in GameModeActivationPolicy.transientSystemUIBundleIdentifiers {
+            XCTAssertFalse(GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: identifier), identifier)
+        }
+    }
+
+    func testMissingBundleIdentifierIsTracked() {
+        XCTAssertTrue(GameModeActivationPolicy.shouldTrackActivation(bundleIdentifier: nil))
+    }
+
     // MARK: - gamePresent
 
     func testFrontmostGameAloneIsPresent() {

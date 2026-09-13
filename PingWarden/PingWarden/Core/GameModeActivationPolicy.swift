@@ -20,6 +20,30 @@ enum GameModeActivationPolicy {
         case unknown
     }
 
+    /// System processes that take activation for a moment without the user
+    /// leaving the game: permission prompts, password sheets, notification
+    /// and Control Center overlays. `UserNotificationCenter` posts a real
+    /// `didActivateApplication` notification when a permission alert appears,
+    /// so a game with a dialog on top used to look like a lost focus and
+    /// protection dropped mid-session, then flapped back when the dialog
+    /// closed. The other entries are the same family, kept in step with
+    /// `ignoredFullscreenOwners`.
+    static let transientSystemUIBundleIdentifiers: Set<String> = [
+        "com.apple.UserNotificationCenter",
+        "com.apple.SecurityAgent",
+        "com.apple.notificationcenterui",
+        "com.apple.controlcenter",
+        "com.apple.systemuiserver",
+    ]
+
+    /// Whether an activation event should replace the tracked frontmost app.
+    /// A missing bundle identifier is tracked, since a game that lacks one
+    /// would already fail the Info.plist check and read as "not a game".
+    static func shouldTrackActivation(bundleIdentifier: String?) -> Bool {
+        guard let bundleIdentifier else { return true }
+        return !transientSystemUIBundleIdentifiers.contains(bundleIdentifier)
+    }
+
     /// A game is present when either observation path sees one.
     static func gamePresent(frontmostIsGame: Bool, fullscreenGamePresent: Bool) -> Bool {
         frontmostIsGame || fullscreenGamePresent
