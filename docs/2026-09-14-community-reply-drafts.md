@@ -1,6 +1,6 @@
 # Community reply drafts, September 14, 2026
 
-Prepared for Oliver Ames. These drafts are not published. The added editorial approach is to answer concrete questions, disclose authorship, and qualify technical claims. Oliver should review these substantive additions before posting.
+Prepared for Oliver Ames. Subsequent live verification confirmed Oliver published the Moonlight reply, counter answer, and app-name correction. The announcement corrections were also applied. See [the current handoff](2026-09-14-reddit-edits-and-reply-handoff.md) for publication status and the expanded reply queue. The text below preserves the prepared versions.
 
 ## Moonlight issue #159
 
@@ -39,4 +39,3 @@ AWDL can contribute to Wi-Fi stutters on a Mac, but a repeating hitch doesn't es
 Game Mode skips automatic activation on Ethernet. For browser streaming, turn protection on manually before playing. AirDrop and other AWDL-dependent features are unavailable until you stop or pause protection.
 
 The dashboard, diagnostics, and past session recaps are free. Enabling protection, including starting a new Latency Session, needs the one-time $15 license or an active transition in the prebuilt app. The source remains MIT-licensed.
-
