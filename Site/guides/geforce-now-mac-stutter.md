@@ -63,6 +63,6 @@ The [troubleshooting guide](../../PingWarden/TROUBLESHOOTING.md#ping-protection-
 
 ## What it costs
 
-Ping Warden is free to download and the source is MIT, so building it yourself and skipping the payment is a supported path. In the prebuilt app the dashboard, the diagnostics, and the latency sessions are free, and turning on Ping Protection takes a one-time $15 license that covers signing, notarization, and testing across macOS releases.
+Ping Warden is free to download and the source is MIT, so building it yourself and skipping the payment is a supported path. In the prebuilt app the dashboard, the diagnostics, and your past session recaps are free. Turning on Ping Protection takes a one-time $15 license that covers signing, notarization, and testing across macOS releases, and starting a Latency Session needs the same license or an active transition because the session turns protection on for its duration.
 
 You don't need any of that to fix your stutter, though. You need to know whether AWDL is the cause, and one Terminal command will tell you.

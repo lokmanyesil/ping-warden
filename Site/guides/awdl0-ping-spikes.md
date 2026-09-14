@@ -67,6 +67,6 @@ The [troubleshooting guide lists the same checks](../../PingWarden/TROUBLESHOOTI
 
 ## If you want the app
 
-Ping Warden is MIT licensed, so building it yourself and running the whole thing for free is a supported path rather than a loophole. The prebuilt signed build is free to download too, and the dashboard, the diagnostics, and the latency sessions work without paying. Enabling Ping Protection in that build takes a one-time $15 license, which pays for signing, notarization, and keeping it working across macOS releases.
+Ping Warden is MIT licensed, so building it yourself and running the whole thing for free is a supported path rather than a loophole. The prebuilt signed build is free to download too, and the dashboard, the diagnostics, and your past session recaps work without paying. Enabling Ping Protection in that build takes a one-time $15 license, and because a Latency Session turns protection on for its duration, starting one needs that license or an active transition. The license which pays for signing, notarization, and keeping it working across macOS releases.
 
 If you're the kind of person who went looking for `awdl0` in the first place, you can probably solve this with a script and twenty minutes, and that's a fine outcome. The part worth doing either way is the measurement, because guessing at a latency problem is how people end up replacing a router that was never broken.

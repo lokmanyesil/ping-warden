@@ -142,6 +142,7 @@ Settings sections:
 - Dashboard
 - General
 - License
+- Targets
 - Automation
 - Advanced
 
@@ -209,7 +210,7 @@ Tools:
 - Enter a license key and verify with Gumroad, or open the Gumroad product page.
 - The transition applies when protection was enabled with an approved helper at the first launch of version 4. It lasts 90 days from that launch, and updates preserve the deadline. For donations before version 4, the pane explains how to request a license at [oliver@ames.consulting](mailto:oliver@ames.consulting).
 - Activation and refresh send the license key and product ID to Gumroad over HTTPS. The key stays in the macOS Keychain between checks.
-- Eligible users receive a weekly transition reminder with the remaining days. The presentation date persists across restarts. Reminders defer during detected games and latency sessions, stop after activation or expiry, and never extend the original deadline.
+- Eligible users see the transition notice once, then reminders when 30 days and 7 days remain, each showing the days left. The presentation date persists across restarts. Reminders defer during detected games and latency sessions, stop after activation or expiry, never extend the original deadline, and a reminder missed while the app was closed does not stack with the next one.
 
 ### 8.6 Targets
 
@@ -237,7 +238,7 @@ App menu (frontmost app state):
 
 Update stack:
 
-- Framework: Sparkle 2.9.4.
+- Framework: Sparkle 2. The exact version is pinned in the Xcode project's `Package.resolved`.
 - Stable feed: `https://oliverames.github.io/ping-warden/appcast.xml`.
 - Beta feed: `https://oliverames.github.io/ping-warden/appcast-beta.xml`, selected in **Settings → Advanced → Updates**. Stable releases also reach this feed.
 - Signature model: EdDSA (`SUPublicEDKey` in app plist).
@@ -293,7 +294,7 @@ Design choices for low overhead:
 - One reference-counted telemetry stream shared by dashboard, menu, and sessions.
 - Rolling bounded history with statistics calculated off the main thread.
 - Five-minute hostname and address caching with cancellable probe deadlines.
-- Game Mode uses event-triggered checks plus a 10-second inactive safety interval.
+- Game Mode uses event-triggered checks plus a safety timer: 2 seconds while a game is detected, 10 seconds otherwise, dropping to 30 seconds after about 90 seconds without a game. App activation and display changes trigger an immediate re-check.
 - Narrow command surface over XPC.
 - Dashboard sampling rate configurable by user.
 

@@ -141,6 +141,7 @@
 <li>Dashboard</li>
 <li>General</li>
 <li>License</li>
+<li>Targets</li>
 <li>Automation</li>
 <li>Advanced</li>
 </ul>
@@ -226,7 +227,7 @@
 <li>Enter a license key and verify with Gumroad, or open the Gumroad product page.</li>
 <li>The transition applies when protection was enabled with an approved helper at the first launch of version 4. It lasts 90 days from that launch, and updates preserve the deadline. For donations before version 4, the pane explains how to request a license at <a href="mailto:oliver@ames.consulting">oliver@ames.consulting</a>.</li>
 <li>Activation and refresh send the license key and product ID to Gumroad over HTTPS. The key stays in the macOS Keychain between checks.</li>
-<li>Eligible users receive a weekly transition reminder with the remaining days. The presentation date persists across restarts. Reminders defer during detected games and latency sessions, stop after activation or expiry, and never extend the original deadline.</li>
+<li>Eligible users see the transition notice once, then reminders when 30 days and 7 days remain, each showing the days left. The presentation date persists across restarts. Reminders defer during detected games and latency sessions, stop after activation or expiry, never extend the original deadline, and a reminder missed while the app was closed does not stack with the next one.</li>
 </ul>
 <h3 id="86-targets">8.6 Targets</h3>
 <ul>
@@ -252,7 +253,7 @@
 <h2 id="10-sparkle-update-system">10. Sparkle Update System</h2>
 <p>Update stack:</p>
 <ul>
-<li>Framework: Sparkle 2.9.4.</li>
+<li>Framework: Sparkle 2. The exact version is pinned in the Xcode project's <code>Package.resolved</code>.</li>
 <li>Stable feed: <code>https://oliverames.github.io/ping-warden/appcast.xml</code>.</li>
 <li>Beta feed: <code>https://oliverames.github.io/ping-warden/appcast-beta.xml</code>, selected in <strong>Settings → Advanced → Updates</strong>. Stable releases also reach this feed.</li>
 <li>Signature model: EdDSA (<code>SUPublicEDKey</code> in app plist).</li>
@@ -305,7 +306,7 @@
 <li>One reference-counted telemetry stream shared by dashboard, menu, and sessions.</li>
 <li>Rolling bounded history with statistics calculated off the main thread.</li>
 <li>Five-minute hostname and address caching with cancellable probe deadlines.</li>
-<li>Game Mode uses event-triggered checks plus a 10-second inactive safety interval.</li>
+<li>Game Mode uses event-triggered checks plus a safety timer: 2 seconds while a game is detected, 10 seconds otherwise, dropping to 30 seconds after about 90 seconds without a game. App activation and display changes trigger an immediate re-check.</li>
 <li>Narrow command surface over XPC.</li>
 <li>Dashboard sampling rate configurable by user.</li>
 </ul>
