@@ -12,7 +12,7 @@
 
 **Left off at**: 4.1.8 live on both feeds, GitHub, Gumroad, and the website on September 14, 2026 at approximately 15:45 UTC. Signed feed copies committed on main as `3e3b216`.
 
-**Open questions**: [#76](https://github.com/oliverames/ping-warden/issues/76) for the Gumroad readiness window. [#74](https://github.com/oliverames/ping-warden/issues/74) for folding the site rebuild into `release.sh` (this release did it by hand). [#64](https://github.com/oliverames/ping-warden/issues/64) still wants the live game session. Acceptance of 4.1.8 among 4.0.x installs: `python3 scripts/download_stats.py --snapshot` in a few days.
+**Open questions**: [#76](https://github.com/oliverames/ping-warden/issues/76) was fixed the same afternoon: the publisher now waits five minutes by default (`--wait-seconds` overrides it, `GUMROAD_WAIT_SECONDS` from `release.sh`), prints a heartbeat while it waits, and `release.sh` prints the exact rerun command if Step 9 still fails; verification is the next stable release completing Step 9 unattended. [#74](https://github.com/oliverames/ping-warden/issues/74) for folding the site rebuild into `release.sh` (this release did it by hand). [#64](https://github.com/oliverames/ping-warden/issues/64) still wants the live game session. Acceptance of 4.1.8 among 4.0.x installs: `python3 scripts/download_stats.py --snapshot` in a few days.
 
 ---
 

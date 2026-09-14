@@ -66,6 +66,17 @@ class GumroadContentTests(unittest.TestCase):
             self.assertEqual(gumroad.wait_for_upload("product", "release.dmg", 123, attempts=2, delay=0), ready["product"])
             self.assertEqual(api.call_count, 2)
 
+    def test_default_upload_wait_covers_slow_gumroad_processing(self):
+        # 4.1.8 (2026-09-14): a 60-second window failed the release's last step
+        # while Gumroad was still settling the file. Keep the default at five
+        # minutes or more, and keep the override arithmetic honest.
+        self.assertGreaterEqual(gumroad.DEFAULT_WAIT_SECONDS, 300)
+        default_attempts = gumroad.wait_for_upload.__defaults__[0]
+        self.assertGreaterEqual(default_attempts * gumroad.POLL_DELAY_SECONDS, gumroad.DEFAULT_WAIT_SECONDS)
+        self.assertEqual(gumroad.attempts_for(300, delay=5), 60)
+        self.assertEqual(gumroad.attempts_for(7, delay=5), 2)
+        self.assertEqual(gumroad.attempts_for(0, delay=5), 1)
+
     def test_incomplete_upload_times_out_without_content_write(self):
         with patch.object(gumroad, "gumroad", return_value={"product": {"files": []}}) as api:
             with self.assertRaisesRegex(ValueError, "did not become ready"):

@@ -568,9 +568,13 @@ echo ""
 # every update after that, so the two never conflict.
 #
 # Stable releases only: a beta DMG must never become the paid deliverable.
-# Publication is incomplete until buyer content is verified. On failure,
-# rerun scripts/publish_gumroad.py with the product and release DMG.
-# SKIP_GUMROAD=1 opts out (e.g. re-running for an already-attached DMG).
+# Publication is incomplete until buyer content is verified. The publisher
+# waits up to GUMROAD_WAIT_SECONDS (default 300) for Gumroad to settle the
+# upload's metadata; the 4.1.8 release outlived the old 60-second window.
+# On failure the exact rerun command is printed: the publisher is idempotent
+# and skips the upload when the file is already attached, so rerunning it
+# once Gumroad catches up finishes the release without touching anything
+# that already shipped. SKIP_GUMROAD=1 opts out entirely.
 echo -e "${GREEN}Step 9: Publishing DMG to Gumroad product...${NC}"
 
 if [ "${BETA_CHANNEL:-0}" = "1" ]; then
@@ -578,7 +582,14 @@ if [ "${BETA_CHANNEL:-0}" = "1" ]; then
 elif [ "${SKIP_GUMROAD:-0}" = "1" ]; then
     echo -e "${YELLOW}SKIP_GUMROAD=1 set; skipping Gumroad upload.${NC}"
 else
-    "$PYTHON_BIN" "$GUMROAD_PUBLISHER" "$GUMROAD_PRODUCT_ID" "$DMG_PATH"
+    GUMROAD_PUBLISH_ARGS=("$GUMROAD_PRODUCT_ID" "$DMG_PATH" --wait-seconds "${GUMROAD_WAIT_SECONDS:-300}")
+    if ! "$PYTHON_BIN" "$GUMROAD_PUBLISHER" "${GUMROAD_PUBLISH_ARGS[@]}"; then
+        echo -e "${RED}Error: the Gumroad deliverable was not published.${NC}" >&2
+        echo "Everything before this step (GitHub release, Sentry, both appcasts) is already live." >&2
+        echo "Once Gumroad has finished processing the upload, rerun just this step from $REPO_ROOT:" >&2
+        echo "  $PYTHON_BIN scripts/publish_gumroad.py $GUMROAD_PRODUCT_ID \"${DMG_PATH#"$REPO_ROOT/"}\"" >&2
+        exit 1
+    fi
 fi
 
 echo ""
