@@ -33,6 +33,11 @@ final class ProtectedSessionCoordinator: ObservableObject {
     private var elapsedTimer: Timer?
     private var interventionTimer: Timer?
     private var startOperationID: UUID?
+    /// The target this session registered with the shared probe. The
+    /// dashboard registers at a higher priority, so while it is open its
+    /// selection owns the probe stream; samples from any other target are
+    /// not this session's and must not enter its recap.
+    private var sessionTarget: (host: String, port: UInt16)?
 
     private init() {
         do {
@@ -90,6 +95,7 @@ final class ProtectedSessionCoordinator: ObservableObject {
         startOperationID = nil
 
         let target = selectedTelemetryTarget()
+        sessionTarget = target
         pingMonitor.start(
             consumerID: telemetryConsumerID,
             server: target.host,
@@ -146,7 +152,8 @@ final class ProtectedSessionCoordinator: ObservableObject {
     }
 
     private func record(_ result: PingMonitor.PingResult) {
-        guard accumulator != nil else { return }
+        guard accumulator != nil, let sessionTarget,
+              result.matches(host: sessionTarget.host, port: sessionTarget.port) else { return }
         accumulator?.record(PingSample(
             latencyMs: result.latencyMs,
             success: result.success,
@@ -162,6 +169,7 @@ final class ProtectedSessionCoordinator: ObservableObject {
         guard let currentAccumulator = accumulator else { return }
 
         accumulator = nil
+        sessionTarget = nil
         phase = .idle
         startOperationID = nil
         activeSessionStartedAt = nil

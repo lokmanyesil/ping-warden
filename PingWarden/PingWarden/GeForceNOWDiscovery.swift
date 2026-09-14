@@ -12,6 +12,67 @@ enum GeForceNOWDiscovery {
     private static let endpoint = URL(string: "https://status.geforcenow.com/api/v2/components.json")
     private static let zoneCodePattern = #"\bNP[A]?-[A-Z0-9-]+\b"#
 
+    /// Zone codes from the last successful fetch, kept in memory for the
+    /// process and in defaults across launches. `DashboardViewModel` is a
+    /// `@StateObject` that is rebuilt every time the Dashboard or Targets
+    /// pane appears, so without this a saved GeForce NOW target could not
+    /// be matched until a fresh network round-trip finished, and the shared
+    /// probe spent those seconds measuring a fallback target instead.
+    private static let cacheLock = NSLock()
+    nonisolated(unsafe) private static var memoryCache: (codes: [String], fetchedAt: Date)?
+    private static let cachedCodesKey = "DashboardGFNZoneCodes"
+    private static let cachedAtKey = "DashboardGFNZoneCodesFetchedAt"
+    private static let cacheRetention: TimeInterval = 30 * 24 * 3600
+
+    /// The last successfully discovered zones, or `nil` when nothing has
+    /// been fetched yet on this Mac (or the persisted copy is too old to
+    /// trust). Cheap and synchronous, so a fresh view model can build its
+    /// full target list before it registers a probe demand.
+    static func cachedTargets(userDefaults: UserDefaults = .standard) -> (targets: [PingTarget], fetchedAt: Date)? {
+        cacheLock.lock()
+        defer { cacheLock.unlock() }
+        if let memoryCache {
+            return (makeTargets(fromCodes: memoryCache.codes), memoryCache.fetchedAt)
+        }
+        guard let codes = userDefaults.stringArray(forKey: cachedCodesKey), !codes.isEmpty else {
+            return nil
+        }
+        let fetchedAt = Date(timeIntervalSince1970: userDefaults.double(forKey: cachedAtKey))
+        guard Date().timeIntervalSince(fetchedAt) < cacheRetention else { return nil }
+        let validCodes = codes.filter { !extractZoneCodes(from: [$0]).isEmpty }
+        guard !validCodes.isEmpty else { return nil }
+        memoryCache = (validCodes, fetchedAt)
+        return (makeTargets(fromCodes: validCodes), fetchedAt)
+    }
+
+    private static func storeCache(codes: [String], fetchedAt: Date, userDefaults: UserDefaults = .standard) {
+        cacheLock.lock()
+        memoryCache = (codes, fetchedAt)
+        cacheLock.unlock()
+        userDefaults.set(codes, forKey: cachedCodesKey)
+        userDefaults.set(fetchedAt.timeIntervalSince1970, forKey: cachedAtKey)
+    }
+
+    /// Remove both cache tiers. Used by the removal flow.
+    static func clearCache(userDefaults: UserDefaults = .standard) {
+        cacheLock.lock()
+        memoryCache = nil
+        cacheLock.unlock()
+        userDefaults.removeObject(forKey: cachedCodesKey)
+        userDefaults.removeObject(forKey: cachedAtKey)
+    }
+
+    private static func makeTargets(fromCodes codes: [String]) -> [PingTarget] {
+        codes.sorted().map { code in
+            PingTarget(
+                displayName: "GeForce NOW (\(code))",
+                host: "\(code.lowercased()).cloudmatchbeta.nvidiagrid.net",
+                port: 443,
+                source: .geforceNow
+            )
+        }
+    }
+
     private struct ComponentsResponse: Decodable {
         let components: [Component]
     }
@@ -39,16 +100,13 @@ enum GeForceNOWDiscovery {
             }
 
             let payload = try JSONDecoder().decode(ComponentsResponse.self, from: data)
-            let codes = extractZoneCodes(from: payload.components.map(\.name))
-
-            return codes.sorted().map { code in
-                PingTarget(
-                    displayName: "GeForce NOW (\(code))",
-                    host: "\(code.lowercased()).cloudmatchbeta.nvidiagrid.net",
-                    port: 443,
-                    source: .geforceNow
-                )
+            let codes = Array(extractZoneCodes(from: payload.components.map(\.name))).sorted()
+            // An empty list is a successful answer that says "no zones";
+            // keep the previous cache rather than persisting nothing.
+            if !codes.isEmpty {
+                storeCache(codes: codes, fetchedAt: Date())
             }
+            return makeTargets(fromCodes: codes)
         } catch {
             return nil
         }

@@ -2745,6 +2745,7 @@ struct AdvancedSettingsContent: View {
         try ProtectedSessionStore().removeAll()
         LicenseManager.shared.resetForRemoval()
         PingWardenPreferences.shared.resetForRemoval()
+        GeForceNOWDiscovery.clearCache()
         if let bundleID = Bundle.main.bundleIdentifier {
             UserDefaults.standard.removePersistentDomain(forName: bundleID)
         }

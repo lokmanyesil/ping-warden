@@ -181,7 +181,20 @@ class DashboardViewModel: ObservableObject {
     init() {
         // Initialize with base targets (no local gateway yet — resolved async in start())
         customTargets = customTargetStore.load()
-        targets = Self.dedupe(Self.baseTargets(localGateway: nil) + Self.toPingTargets(customTargets))
+        // Seed the GeForce NOW zones from the last successful discovery so a
+        // saved GFN target matches right away. Without this every reopen of
+        // the pane fell back to another target and probed it until the
+        // network fetch below finished. The fetch still runs (subject to
+        // the cooldown) and replaces the list when it succeeds.
+        if let cached = GeForceNOWDiscovery.cachedTargets() {
+            gfnTargets = cached.targets
+            lastGFNRefreshDate = cached.fetchedAt
+        }
+        targets = Self.dedupe(
+            Self.baseTargets(localGateway: nil)
+                + gfnTargets.sorted { $0.displayName < $1.displayName }
+                + Self.toPingTargets(customTargets)
+        )
 
         if let savedInterval = userDefaults.object(forKey: DashboardConfig.updateIntervalKey) as? Double {
             updateInterval = sanitizedInterval(savedInterval)

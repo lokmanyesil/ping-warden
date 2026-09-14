@@ -14,6 +14,20 @@ enum DiagnosticsExporter {
         let contents: String
     }
 
+    /// The architecture of the running slice. A universal build reports
+    /// whichever slice macOS launched, which is the one a support thread
+    /// needs to know about. The previous "available"/"unknown" line only
+    /// echoed whether the Mac had at least one CPU.
+    static var runningArchitecture: String {
+        #if arch(arm64)
+        return "arm64"
+        #elseif arch(x86_64)
+        return "x86_64"
+        #else
+        return "unknown"
+        #endif
+    }
+
     static func exportSnapshot() -> ExportResult? {
         // Both getInterventionCount and performHealthCheck below use
         // semaphore waits that would deadlock/stall the main thread. Enforce
@@ -90,7 +104,7 @@ enum DiagnosticsExporter {
 
         system:
           macos=\(osString)
-          arch=\(ProcessInfo.processInfo.processorCount > 0 ? "available" : "unknown")
+          arch=\(Self.runningArchitecture)
 
         preferences:
           monitoring_intent=\(PingWardenPreferences.shared.isMonitoringEnabled)

@@ -26,9 +26,22 @@ class PingMonitor: @unchecked Sendable {
         let latency: TimeInterval  // in seconds
         let timestamp: Date
         let success: Bool
+        /// The target this sample was measured against. The shared probe
+        /// follows whichever consumer currently wins the demand resolver,
+        /// so an observer that cares about one specific target (the
+        /// session recorder) must check these rather than assume every
+        /// sample is its own.
+        let host: String
+        let port: UInt16
         
         var latencyMs: Double {
             latency * 1000.0
+        }
+
+        /// Case-insensitive host match plus port, the same identity the
+        /// dashboard uses for target ids.
+        func matches(host otherHost: String, port otherPort: UInt16) -> Bool {
+            port == otherPort && host.caseInsensitiveCompare(otherHost) == .orderedSame
         }
     }
 
@@ -218,7 +231,9 @@ class PingMonitor: @unchecked Sendable {
             let result = PingResult(
                 latency: latency,
                 timestamp: timestamp,
-                success: success
+                success: success,
+                host: host,
+                port: probePort
             )
 
             guard self.isSessionCurrent(sessionID) else {
