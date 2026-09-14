@@ -1,4 +1,4 @@
-# What awdl0 is, and whether it's causing your ping spikes
+# Mac Wi-Fi ping spikes: what awdl0 is, and whether it's the cause
 
 You found `awdl0` in `ifconfig` output or in a network tool, you noticed it appears and disappears on its own, and you're wondering whether it explains the latency spikes you've been chasing. It might. It's a real cause of periodic Wi-Fi latency on a Mac, it's easy to test, and it's also easy to blame for spikes it had nothing to do with.
 
