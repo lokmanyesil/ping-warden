@@ -232,13 +232,52 @@ class PingWardenMonitor: @unchecked Sendable {
     /// the helper's authenticated XPC listener. The distributed notification
     /// that triggers this path is only a display invalidation signal and never
     /// causes a privileged command.
+    ///
+    /// The adopted value comes from shared defaults, which any process
+    /// running as this user can write, and the notification itself is
+    /// unauthenticated. Neither can move the radio, but a stale or
+    /// hand-written value could leave the menu saying "Protected" over an
+    /// interface that is up. So the adoption is provisional: the helper,
+    /// which alone knows what it is enforcing, is asked to confirm and its
+    /// answer wins when it disagrees.
     func adoptExternallyAppliedMonitoringState(_ active: Bool) {
         stateLock.lock()
         _protectionOperationGeneration &+= 1
+        let operationID = _protectionOperationGeneration
         _isMonitoring = active
         _desiredProtectionEnabled = active
         stateLock.unlock()
         notifyStateChange()
+        confirmAdoptedStateWithHelper(expectedActive: active, operationID: operationID)
+    }
+
+    /// Reconcile a provisionally adopted state against the helper. A
+    /// missing connection or a dropped reply leaves the adopted state in
+    /// place; the reconnect path reasserts on the next successful connect.
+    private func confirmAdoptedStateWithHelper(expectedActive: Bool, operationID: UInt64) {
+        guard isHelperRegistered else { return }
+        if xpcConnection == nil {
+            connectXPC()
+        }
+        guard let proxy = getHelperProxy() else { return }
+
+        proxy.isAWDLEnabled(reply: { [weak self] awdlEnabled in
+            guard let monitor = self else { return }
+            DispatchQueue.main.async {
+                // The helper allows AWDL up when protection is off.
+                let helperSaysActive = !awdlEnabled
+                guard monitor.isCurrentProtectionOperation(operationID),
+                      helperSaysActive != expectedActive else { return }
+                log.warning("Externally reported protection state (\(expectedActive)) disagrees with the helper (\(helperSaysActive)); adopting the helper's state")
+                monitor.stateLock.lock()
+                monitor._isMonitoring = helperSaysActive
+                monitor._desiredProtectionEnabled = helperSaysActive
+                monitor.stateLock.unlock()
+                PingWardenPreferences.shared.effectiveMonitoringEnabled = helperSaysActive
+                PingWardenPreferences.shared.lastKnownState = helperSaysActive ? "down" : "up"
+                monitor.notifyStateChange()
+            }
+        })
     }
 
     /// Register for monitor state changes. Returns a token that can be removed later.
