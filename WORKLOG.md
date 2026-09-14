@@ -14,11 +14,13 @@
 
 **Verification**: 145 core tests pass; unsigned Debug builds succeeded after each app change; `git status` clean after every commit; the new dashboard image serves from raw.githubusercontent.com with HTTP 200; the website check passed after the retitle rebuild. 4.1.8 is installed in /Applications and running for the screenshots (replaced the 4.1.7 copy; helper registration unaffected because the bundle path is unchanged). Not verified: the What's New item has not been exercised live, since the first build that ships it records a baseline and offers nothing until the release after it.
 
-**Decisions made**: Announce 4.x only, not 3.0. The pre-4 donor note in the License pane stays because it tells donors how to claim a license. README and website donation badges, FUNDING.yml, the 2.x GitHub release banners, and the pinned Discussion replacement wait for Oliver's word because they are public surfaces.
+**Decisions made**: Announce 4.x only, not 3.0. The pre-4 donor note in the License pane stays because it tells donors how to claim a license.
+
+**Follow-up the same afternoon, on Oliver's yes**: All twenty 2.x GitHub release bodies now open with a two-line banner pointing at Ping Warden 4 and the upgrade guide; v2.0.1 through v2.0.5 get the variant that says the build can't update itself and needs a manual download, v2.0.6 through v2.4.3 get the Check for Updates variant. Bodies were prepended, not rewritten, and the historical Buy Me a Coffee lines inside v2.4.1 and v2.4.3 were left as shipped. Discussion #77 "Updating from Ping Warden 2 or 3" was created in Announcements to replace the pinned user post #30 ("I hope it works", April 2026); GitHub's GraphQL API has no pin mutation for discussions, so the pin swap was done in the browser. The README lost both Buy Me a Coffee badges and the "donations since version 4 still help" line, and `.github/FUNDING.yml` is gone; the Donors sentence under Pricing stays. Site rebuilt from the README (overview page dated 2026-09-14) and the check passed.
 
 **Left off at**: Everything above committed and pushed on September 14, 2026; browser tabs open for Oliver to publish.
 
-**Open questions**: Whether to remove the remaining donation surfaces (README badges, site, FUNDING.yml). Whether to stamp the 2.x release pages with an update banner and replace the pinned Discussion. Whether to create a personal Homebrew tap now. Gumroad Discover risk review outcome, roughly three weeks after 2026-09-09. Download counts a few days after the posts go up: `python3 scripts/download_stats.py --snapshot`.
+**Open questions**: Whether to create a personal Homebrew tap now. Gumroad Discover risk review outcome, roughly three weeks after 2026-09-09. Download counts a few days after the posts go up: `python3 scripts/download_stats.py --snapshot`.
 
 ---
 
