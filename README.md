@@ -19,7 +19,6 @@
   <a href="https://github.com/oliverames/ping-warden/releases/latest"><img src="https://img.shields.io/github/v/release/oliverames/ping-warden?style=flat-square&color=f5a542&label=Download" alt="Download"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-f5a542?style=flat-square" alt="License"></a>
   <a href="https://amesconsulting.gumroad.com/l/pingwarden"><img src="https://img.shields.io/badge/Gumroad-license-f5a542?style=flat-square" alt="Buy license on Gumroad"></a>
-  <a href="https://www.buymeacoffee.com/oliverames"><img src="https://img.shields.io/badge/Buy_Me_a_Coffee-donate-f5a542?style=flat-square&logo=buy-me-a-coffee&logoColor=white" alt="Donate on Buy Me a Coffee"></a>
 </p>
 
 <p align="center">
@@ -126,8 +125,6 @@ Diagnostics exports are written locally. Ping Warden never uploads them for you.
 
 Buying a [license](https://amesconsulting.gumroad.com/l/pingwarden) is the most direct way to support the work, and it is what unlocks Ping Protection in the prebuilt app. See [Pricing](#pricing) for the terms, the existing-user transition, and the donor path.
 
-Donations since version 4 through [Buy Me a Coffee](https://www.buymeacoffee.com/oliverames) still help with signing and testing, though they do not activate Ping Protection.
-
 ## Documentation
 
 - [Documentation website](https://pingwarden.app/docs/) includes the complete guides below, pricing, privacy, and release notes.
@@ -160,12 +157,6 @@ The source code is MIT, Copyright (c) 2025-2026 Oliver Ames — build it, inspec
 The prebuilt, signed, and notarized app is free to download, and everything except enabling Ping Protection is free to use. Enabling Ping Protection in that build requires a purchased key. [Pricing](#pricing) covers what it costs, how verification works, and how the existing-user transition and donor path apply.
 
 ---
-
-<p align="center">
-  <a href="https://www.buymeacoffee.com/oliverames">
-    <img src="https://img.shields.io/badge/Buy_Me_a_Coffee-donate-f5a542?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Donate on Buy Me a Coffee">
-  </a>
-</p>
 
 <p align="center">
   <sub>
