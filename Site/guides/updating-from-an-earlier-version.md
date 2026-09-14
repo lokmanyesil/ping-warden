@@ -1,8 +1,10 @@
 # Updating from Ping Warden 2 or 3
 
-If you are still on an older version and you have seen a note about a license, here is the short answer: updating does not cost you anything, and your protection keeps working.
+**On version 2.0.5 or earlier? You need a manual download to get current.** Quit Ping Warden, [download the latest DMG](https://github.com/oliverames/ping-warden/releases/latest), and replace the copy in Applications. Then launch Ping Warden from Applications. You do not need to install intermediate releases.
 
-Version 4 introduced a one-time $15 license for Ping Protection, the part that holds AWDL down. That change is real, but it does not land on existing users the day they update, and the free part of the app got no smaller.
+Versions through 2.0.4 have no working in-app updater. Version 2.0.5 introduced Sparkle, but its updater configuration was incomplete. Waiting for a prompt will not reliably bring these installations up to date.
+
+Version 4 introduced a one-time $15 license for Ping Protection. Downloading the update is free. Eligible existing users receive a 90-day transition, as described below. The dashboard, diagnostics, and past session recaps remain free.
 
 ## What happens when you update
 
@@ -30,11 +32,13 @@ Donations through Buy Me a Coffee made before version 4 are honored as full lice
 
 ## How to update
 
-If the app is running and has checked for updates, it will offer version 4 and ask you to confirm. Version 4 is never installed silently on top of an older version, because the licensing change is something you should read before accepting rather than discover afterwards.
+For **2.0.5 and earlier**, use the manual download above.
 
-You can also trigger it yourself from the menu bar icon, under **Check for Updates**, or download the current build from the [releases page](https://github.com/oliverames/ping-warden/releases/latest) and drag it over the old copy in Applications.
+For **2.0.6 and later**, choose **Check for Updates** from the menu bar icon. You may be offered an intermediate update before version 4. Check again after installing it. If no update appears or installation fails, quit the app and replace it using the [latest DMG](https://github.com/oliverames/ping-warden/releases/latest).
 
-One thing worth knowing if you only ever used the free dashboard and never approved the helper: on versions before 4.1.6, automatic update checks did not start at all in that state, so you may never have been offered anything. Using **Check for Updates** from the menu works regardless, and once you are on 4.1.6 or later the automatic checks run normally.
+Version 4 requires confirmation before an in-app upgrade from an older free build. It is not installed silently. If you previously skipped the major upgrade, checking manually lets you reconsider it.
+
+Before 4.1.6, automatic checks could depend on approval of the privileged helper. If you only used the dashboard, this may explain missing prompts. Manual checking is available in builds with an updater. From 4.1.6 onward, automatic checks start independently of helper approval.
 
 ## If you would rather not update
 

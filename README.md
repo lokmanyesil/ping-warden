@@ -61,7 +61,9 @@ Buy the [Ping Warden License on Gumroad](https://amesconsulting.gumroad.com/l/pi
 
 Want to try the free features first? The same build is on [Releases](https://github.com/oliverames/ping-warden/releases/latest). Everything except enabling Ping Protection works without a key, and any official build accepts the key from a later purchase.
 
-**Already have an older version and never see update prompts?** Before 4.1.6, automatic update checks only started once the privileged helper was approved, so an install that only used the free dashboard was never offered anything. Choose **Check for Updates** from the menu bar icon, or download the current build above and drag it over the copy in Applications. From 4.1.6 onward the checks run whether or not the helper is approved. See [updating from an earlier version](Site/guides/updating-from-an-earlier-version.md).
+**On version 2.0.5 or earlier? Download the current version once.** Early builds either lack an updater or have incomplete updater configuration. Quit Ping Warden, [download the latest DMG](https://github.com/oliverames/ping-warden/releases/latest), and replace the copy in Applications. Launch it from Applications afterward.
+
+**On a later version?** Choose **Check for Updates** from the menu bar icon. If no update appears or installation fails, use the same manual download. Before 4.1.6, automatic checks could depend on helper approval. Version 4 asks you to accept the licensing change before an in-app upgrade. Eligible existing users receive a 90-day transition, starting at their first launch of version 4 with protection enabled and the helper approved. See [updating from an earlier version](Site/guides/updating-from-an-earlier-version.md).
 
 ### 2. Activate your license
 
