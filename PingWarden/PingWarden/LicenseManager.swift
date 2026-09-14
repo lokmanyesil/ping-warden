@@ -187,14 +187,27 @@ final class LicenseManager: ObservableObject {
 
     /// Move the last-seen clock mark forward. Called at launch and on
     /// each periodic tick, so a later clock rollback is detectable.
+    ///
+    /// The mark only needs to be fresh to within a fraction of the
+    /// 24-hour rollback tolerance in LicensePolicy.clockIsPlausible, so
+    /// a recent mark is left alone. Without this floor the one-minute
+    /// entitlement tick rewrote and resealed the App Group plist every
+    /// minute for the life of the process for no gain in detection.
     func recordClockObservation() {
-        guard sealedState != nil else { return }
+        guard let state = sealedState else { return }
+        let now = Date()
+        if let seen = state.lastSeenAt, seen > now { return }
+        if let seen = state.lastSeenAt,
+           now.timeIntervalSince(seen) < Self.clockObservationMinimumInterval {
+            return
+        }
         updateSealedState { state in
-            let now = Date()
-            if let seen = state.lastSeenAt, seen > now { return }
             state.lastSeenAt = now
         }
     }
+
+    /// How stale the last-seen mark may get before a tick rewrites it.
+    nonisolated private static let clockObservationMinimumInterval: TimeInterval = 10 * 60
 
     /// Days remaining in an active grandfather window, for UI display.
     var grandfatherDaysRemaining: Int? {
@@ -238,8 +251,9 @@ final class LicenseManager: ObservableObject {
 
     /// Whether the one-time transition notice window has already been
     /// shown on this Mac. The notice explains the paid-model move once,
-    /// on the first launch of the licensed build. Weekly reminders use
-    /// a separate timestamp so legacy installs retain their notice state.
+    /// on the first launch of the licensed build. The 30-day and 7-day
+    /// reminders use a separate timestamp so legacy installs retain
+    /// their notice state.
     var transitionNoticeShown: Bool {
         get { defaults.bool(forKey: transitionNoticeShownKey) }
         set { defaults.set(newValue, forKey: transitionNoticeShownKey) }

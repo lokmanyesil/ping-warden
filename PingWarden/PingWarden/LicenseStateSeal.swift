@@ -46,12 +46,37 @@ enum LicenseStateSeal {
     /// The IOPlatformUUID of this Mac, or a fixed marker when IOKit
     /// cannot answer. The marker still seals, it just loses the
     /// per-device binding.
+    ///
+    /// The value cannot change while the process runs, and every sealed
+    /// read (menu refreshes, the one-minute entitlement tick, each
+    /// `canEnableProtection` check) rebuilds the payload, so resolve it
+    /// once instead of walking the IORegistry on every call. Only a
+    /// successful lookup is cached: a transient IOKit failure must not
+    /// pin the fallback marker for the rest of the session, because a
+    /// seal written under the marker would stop matching once the real
+    /// UUID became readable again.
     static func deviceIdentifier() -> String {
+        cachedDeviceIdentifierLock.lock()
+        defer { cachedDeviceIdentifierLock.unlock() }
+        if let cached = cachedDeviceIdentifier {
+            return cached
+        }
+        let resolved = resolveDeviceIdentifier()
+        if resolved.isCached {
+            cachedDeviceIdentifier = resolved.value
+        }
+        return resolved.value
+    }
+
+    private static let cachedDeviceIdentifierLock = NSLock()
+    nonisolated(unsafe) private static var cachedDeviceIdentifier: String?
+
+    private static func resolveDeviceIdentifier() -> (value: String, isCached: Bool) {
         let service = IOServiceGetMatchingService(
             kIOMainPortDefault,
             IOServiceMatching("IOPlatformExpertDevice")
         )
-        guard service != 0 else { return "no-platform-expert" }
+        guard service != 0 else { return ("no-platform-expert", false) }
         defer { IOObjectRelease(service) }
         guard let value = IORegistryEntryCreateCFProperty(
             service,
@@ -59,8 +84,8 @@ enum LicenseStateSeal {
             kCFAllocatorDefault,
             0
         )?.takeRetainedValue() as? String, !value.isEmpty else {
-            return "no-platform-uuid"
+            return ("no-platform-uuid", false)
         }
-        return value
+        return (value, true)
     }
 }

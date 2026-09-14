@@ -94,12 +94,31 @@ enum PingWardenWidgetLicenseGate {
         return diff == 0 && stored.utf8.count == expected.utf8.count
     }
 
+    /// Resolved once per process for the same reason as
+    /// LicenseStateSeal.deviceIdentifier in the app target; only a
+    /// successful lookup is cached.
     private static func deviceIdentifier() -> String {
+        cachedDeviceIdentifierLock.lock()
+        defer { cachedDeviceIdentifierLock.unlock() }
+        if let cached = cachedDeviceIdentifier {
+            return cached
+        }
+        let resolved = resolveDeviceIdentifier()
+        if resolved.isCached {
+            cachedDeviceIdentifier = resolved.value
+        }
+        return resolved.value
+    }
+
+    private static let cachedDeviceIdentifierLock = NSLock()
+    nonisolated(unsafe) private static var cachedDeviceIdentifier: String?
+
+    private static func resolveDeviceIdentifier() -> (value: String, isCached: Bool) {
         let service = IOServiceGetMatchingService(
             kIOMainPortDefault,
             IOServiceMatching("IOPlatformExpertDevice")
         )
-        guard service != 0 else { return "no-platform-expert" }
+        guard service != 0 else { return ("no-platform-expert", false) }
         defer { IOObjectRelease(service) }
         guard let value = IORegistryEntryCreateCFProperty(
             service,
@@ -107,8 +126,8 @@ enum PingWardenWidgetLicenseGate {
             kCFAllocatorDefault,
             0
         )?.takeRetainedValue() as? String, !value.isEmpty else {
-            return "no-platform-uuid"
+            return ("no-platform-uuid", false)
         }
-        return value
+        return (value, true)
     }
 }
