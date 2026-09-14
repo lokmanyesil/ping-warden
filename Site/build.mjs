@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, copyFile } from 'node:fs/promises';
 import { dirname, resolve, relative, posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
@@ -57,6 +57,9 @@ function link(href, source) {
 const siteUpdated = '2026-09-11';
 const urls = [{ loc: '/', lastmod: siteUpdated }, { loc: '/docs/', lastmod: siteUpdated }];
 await mkdir(resolve(output, 'docs'), { recursive: true });
+// Keep the website screenshot identical to the user-supplied version 4 capture.
+await copyFile(resolve(root, 'docs/images/ping-warden-4-dashboard.png'), resolve(output, 'dashboard-v4.png'));
+await copyFile(resolve(root, 'docs/images/ping-warden-4-dashboard.png'), resolve(output, 'dashboard.png'));
 for (const page of pages) {
   const source = await readFile(resolve(root, page.source), 'utf8');
   // Omit repository badge blocks and its repeated title; all guide prose remains.
@@ -104,7 +107,7 @@ await writeFile(resolve(output, 'docs/index.html'), `<!doctype html><html lang="
 const rating = { '@type': 'AggregateRating', ratingValue: 5, reviewCount: 1, bestRating: 5, worstRating: 1 };
 const appSchema = { '@context': 'https://schema.org', '@graph': [
   { '@type': 'WebSite', '@id': origin + '/#website', name: 'Ping Warden', url: origin + '/', inLanguage: 'en' },
-  { '@type': 'SoftwareApplication', name: 'Ping Warden', url: origin + '/', operatingSystem: 'macOS 13 or later', applicationCategory: 'UtilitiesApplication', image: origin + '/app-icon.png', screenshot: origin + '/dashboard.png', description: 'A macOS menu bar app that monitors latency and pauses AWDL to reduce related Wi-Fi interruptions. The dashboard is free; enabling Ping Protection requires a one-time $15 license.', author: { '@type': 'Person', name: 'Oliver Ames' }, downloadUrl: 'https://github.com/oliverames/ping-warden/releases/latest', softwareHelp: { '@type': 'WebPage', url: origin + '/docs/' }, aggregateRating: rating, offers: [
+  { '@type': 'SoftwareApplication', name: 'Ping Warden', url: origin + '/', operatingSystem: 'macOS 13 or later', applicationCategory: 'UtilitiesApplication', image: origin + '/app-icon.png', screenshot: origin + '/dashboard-v4.png', description: 'A macOS menu bar app that monitors latency and pauses AWDL to reduce related Wi-Fi interruptions. The dashboard is free; enabling Ping Protection requires a one-time $15 license.', author: { '@type': 'Person', name: 'Oliver Ames' }, downloadUrl: 'https://github.com/oliverames/ping-warden/releases/latest', softwareHelp: { '@type': 'WebPage', url: origin + '/docs/' }, aggregateRating: rating, offers: [
     { '@type': 'Offer', name: 'Free dashboard', price: '0', priceCurrency: 'USD', url: 'https://github.com/oliverames/ping-warden/releases/latest' },
     { '@type': 'Offer', name: 'Ping Protection license', price: '15', priceCurrency: 'USD', url: 'https://amesconsulting.gumroad.com/l/pingwarden' }
   ] }
