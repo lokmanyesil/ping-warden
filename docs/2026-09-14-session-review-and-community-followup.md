@@ -1,5 +1,7 @@
 # Session review and community follow-up, September 14, 2026
 
+**Release closeout:** [4.1.9](https://github.com/oliverames/ping-warden/releases/tag/v4.1.9) is now published on GitHub, both signed update feeds, and Gumroad. It ships the app changes described below as unreleased. Site preflight and Gumroad delivery completed unattended. The fresh screenshots and layout repair are live. Oliver published selected replies and stopped the reply sweep. See [the final worklog entry](../WORKLOG.md) for verification and remaining checks. The following audit preserves the earlier observation time and is not current publication status.
+
 This review reconciles the supplied conversation, repository history through 62e060a, current GitHub API results, and Reddit pages inspected in Chrome. It is a bounded search, not an exhaustive index of Reddit. Social replies below remain drafts for Oliver Ames to publish.
 
 ## Request and completion ledger

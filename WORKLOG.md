@@ -1,5 +1,17 @@
 # Ping Warden Worklog
 
+## 2026-09-14 - Ping Warden 4.1.9 released and session closed
+
+Published [4.1.9](https://github.com/oliverames/ping-warden/releases/tag/v4.1.9), build 41900, from a301e5a. It ships What's New and removal of the in-app donation buttons. First launch records the What's New baseline; prompts begin with subsequent version changes. The donor-license instructions remain.
+
+Verification: all 145 core tests, 10 release-tool tests, and website checks passed. The maintained release workflow completed successfully, including site preflight, universal app/archive validation, app and DMG notarization and stapling, mounted-payload Gatekeeper validation, Sentry publication, signed stable/beta feeds, and unattended Gumroad delivery with its license-key content preserved. The downloaded GitHub DMG matches the local artifact: SHA-256 `08e6c36719486cf132ca3a1cb6cc91813dac813f43bb6349792c7163f27974ea`, 5,835,662 bytes. Both public feeds are byte-identical to the local signed copies and verify against the built app's public key. The website deployment passed and its live release page contains the 4.1.9 anchor.
+
+Resolved this session: end-to-end release verification for #74 and #76. Still open: [#78](https://github.com/oliverames/ping-warden/issues/78) tracks live What's New and donation-removal UI checks; [#64](https://github.com/oliverames/ping-warden/issues/64) tracks live-game and Ethernet behavior. Dependency PRs #72, #73, and #75 remain outside this release. The installed /Applications copy was checked and remains 4.1.8; publication does not imply this Mac was updated.
+
+The website's fresh supplied screenshots and layout corrections are deployed, and legacy upgrade guidance is documented in the linked session records. Oliver confirmed he had answered the comments he wanted to answer, so the reply sweep is stopped. Earlier unsubmitted-draft descriptions below are historical snapshots; the community handoff records later publications. Review-request emails and other optional outreach have not been rechecked or sent during release closeout. No agent configuration or skills changed, so configuration backups and Notes configuration-tree reconciliation do not apply. No Codex memory was changed.
+
+---
+
 ## 2026-09-14 - Session reconciliation and targeted community replies
 
 Reconciled every requested workstream in [the session review](docs/2026-09-14-session-review-and-community-followup.md), separating shipped v4.1.8, changes committed after that release, earlier verification records, and unsubmitted drafts. Verified the current release, all twenty v2 opening banners, Discussion #77 contents, and closed issues #74/#76. Recorded remaining release validation and public-copy qualifications in [#78](https://github.com/oliverames/ping-warden/issues/78), alongside existing live-game issue #64.
