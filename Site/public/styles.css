@@ -37,9 +37,10 @@ p { color: var(--muted); margin: 0; }
 figcaption { font-size: 15px; color: var(--muted); margin-top: 0; }
 h2 { font-size: clamp(27px, 2.6vw, 34px); line-height: 1.14; letter-spacing: -.04em; font-weight: 700; margin: 0 0 15px; }
 h3 { font-size: 19px; line-height: 1.3; letter-spacing: -.018em; margin: 0 0 6px; }
-.explanation { display: grid; grid-template-columns: 1fr 1fr; padding-block: 8px 38px; }
-.explanation article:first-child { padding-right: 40px; border-right: 1px solid var(--line); }
-.explanation article:last-child { padding-left: 40px; }
+.explanation { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; padding-block: 8px 38px; }
+.explanation article { min-width: 0; }
+.explanation article:last-child { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; border-top: 1px solid var(--line); padding-top: 30px; }
+.explanation code { overflow-wrap: anywhere; }
 .setup { display: grid; grid-template-columns: 1fr 1fr; gap: 38px; border-top: 1px solid var(--line); padding-block: 36px; }
 .setup ol { list-style: none; counter-reset: step; margin: 0; padding: 0; }
 .setup li { position: relative; counter-increment: step; padding-left: 60px; margin-bottom: 24px; }
@@ -104,8 +105,7 @@ footer nav { gap: 20px; }
   .product { margin: 18px -12px 33px; }
   figcaption { padding-inline: 12px; font-size: 13px; }
   .explanation { grid-template-columns: 1fr; gap: 25px; padding-bottom: 30px; }
-  .explanation article:first-child { padding: 0; border: 0; }
-  .explanation article:last-child { padding: 0; }
+  .explanation article:last-child { grid-template-columns: 1fr; gap: 0; padding-top: 25px; }
   body { font-size: 17px; }
   .setup { grid-template-columns: 1fr; gap: 10px; padding-block: 30px; }
   .setup li { padding-left: 51px; }
