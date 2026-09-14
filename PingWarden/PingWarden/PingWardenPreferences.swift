@@ -32,6 +32,7 @@ final class PingWardenPreferences: @unchecked Sendable {
     private let lifetimeInterventionCountKey = "LifetimeInterventionCount"
     private let crashReportingEnabledKey = "CrashReportingEnabled"
     private let betaChannelEnabledKey = "BetaChannelEnabled"
+    private let lastSeenWhatsNewVersionKey = "LastSeenWhatsNewVersion"
 
     /// Shared App Group defaults handle, exposed so non-singleton consumers
     /// (CustomPingTargetStore, tests, future widget targets) can re-use the
@@ -216,6 +217,14 @@ final class PingWardenPreferences: @unchecked Sendable {
     var betaChannelEnabled: Bool {
         get { defaults.bool(forKey: betaChannelEnabledKey) }
         set { defaults.set(newValue, forKey: betaChannelEnabledKey) }
+    }
+
+    /// Bundle version whose release notes the user has already been offered.
+    /// `nil` until the first launch records a baseline, so a fresh install is
+    /// never asked to catch up on releases it never missed.
+    var lastSeenWhatsNewVersion: String? {
+        get { defaults.string(forKey: lastSeenWhatsNewVersionKey) }
+        set { defaults.set(newValue, forKey: lastSeenWhatsNewVersionKey) }
     }
 
     /// Remove every value owned by the shared app-group suite. This is used

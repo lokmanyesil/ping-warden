@@ -69,6 +69,12 @@ struct PingWardenApp: App {
                 Link("Ping Warden Help", destination: LicenseManager.documentationURL)
                 Link("Troubleshooting", destination: LicenseManager.troubleshootingURL)
                 Link("Ping Warden Website", destination: LicenseManager.websiteURL)
+                if let whatsNewVersion = appDelegate.whatsNewVersion {
+                    Divider()
+                    Button("What's New in \(whatsNewVersion)...") {
+                        appDelegate.openWhatsNew()
+                    }
+                }
             }
             CommandGroup(replacing: .appSettings) {
                 Button("Settings...") {
@@ -81,8 +87,9 @@ struct PingWardenApp: App {
 }
 
 @MainActor
-class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDelegate, SPUUpdaterDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDelegate, SPUUpdaterDelegate, ObservableObject {
     private static let appMenuCheckForUpdatesTag = 2201
+    private static let whatsNewMenuItemTag = 180
     // Sparkle feed URL is defined in Info.plist (SUFeedURL) as the single source of truth.
 
     private var updaterController: SPUStandardUpdaterController?
@@ -115,6 +122,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDele
     private let protectionExperience = ProtectionExperienceCoordinator.shared
     private let settingsNavigation = SettingsNavigationModel()
     private var isTerminating = false
+    /// Version whose release notes are on offer; nil once opened or when
+    /// nothing is new. Published so the SwiftUI Help menu tracks it.
+    @Published private(set) var whatsNewVersion: String?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         log.info("Ping Warden launching...")
@@ -227,6 +237,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDele
                 }
             }
         }
+
+        // Decide before the status menu is built whether this launch follows
+        // an update; the What's New item only exists while there is one.
+        prepareWhatsNewOffer()
 
         // Setup menu bar (unless Control Center mode is enabled AND widget is available)
         // Always check if widget is actually available before hiding menu bar
@@ -783,6 +797,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDele
         settingsItem.image = menuSymbol("gearshape")
         statusMenu?.addItem(settingsItem)
 
+        // Release notes for the version just installed, offered until opened.
+        if let whatsNewVersion {
+            let whatsNewItem = NSMenuItem(
+                title: "What's New in \(whatsNewVersion)...",
+                action: #selector(openWhatsNew),
+                keyEquivalent: ""
+            )
+            whatsNewItem.target = self
+            whatsNewItem.tag = Self.whatsNewMenuItemTag
+            whatsNewItem.image = menuSymbol("sparkles")
+            statusMenu?.addItem(whatsNewItem)
+        }
+
         // Check for Updates (Sparkle)
         let updateItem = NSMenuItem(
             title: "Check for Updates...",
@@ -1008,6 +1035,47 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDele
 
     @objc private func openDocumentation() {
         NSWorkspace.shared.open(LicenseManager.documentationURL)
+    }
+
+    // MARK: - What's New
+
+    /// Sparkle shows release notes only before an update installs, so someone
+    /// who clicked Install without reading has nothing in the app afterwards
+    /// that says what changed. Decide once per launch whether to offer them.
+    private func prepareWhatsNewOffer() {
+        guard let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
+            log.warning("Bundle has no CFBundleShortVersionString; skipping What's New")
+            return
+        }
+        let preferences = PingWardenPreferences.shared
+        guard let lastSeenVersion = preferences.lastSeenWhatsNewVersion else {
+            // Fresh install: nothing to catch up on. Record the baseline so
+            // the next update is the first one offered.
+            preferences.lastSeenWhatsNewVersion = currentVersion
+            return
+        }
+        guard WhatsNewPolicy.shouldOffer(lastSeenVersion: lastSeenVersion, currentVersion: currentVersion) else {
+            return
+        }
+        log.info("Offering What's New for \(currentVersion, privacy: .public); last seen \(lastSeenVersion, privacy: .public)")
+        whatsNewVersion = currentVersion
+    }
+
+    /// Opens the release notes for the running version and retires the offer
+    /// from both menus. The menu item is the whole surface: no window, no alert.
+    @objc func openWhatsNew() {
+        guard let version = whatsNewVersion else { return }
+        if let url = WhatsNewPolicy.releaseNotesURL(for: version) {
+            NSWorkspace.shared.open(url)
+        } else {
+            log.error("No release notes URL for version \(version, privacy: .public)")
+        }
+        PingWardenPreferences.shared.lastSeenWhatsNewVersion = version
+        whatsNewVersion = nil
+        if let menu = statusMenu,
+           let item = menu.items.first(where: { $0.tag == Self.whatsNewMenuItemTag }) {
+            menu.removeItem(item)
+        }
     }
 
     @objc private func supportPingWarden() {
