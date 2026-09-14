@@ -1078,10 +1078,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDele
         }
     }
 
-    @objc private func supportPingWarden() {
-        NSWorkspace.shared.open(URL(string: "https://buymeacoffee.com/oliverames")!)
-    }
-
     @objc private func openLicenseSettings() {
         settingsNavigation.selectedSection = .license
         openSettings()
@@ -2008,23 +2004,6 @@ struct GeneralSettingsContent: View {
                 }
             }
 
-            Section("Support") {
-                LabeledContent {
-                    Button("Donate...") {
-                        NSWorkspace.shared.open(URL(string: "https://buymeacoffee.com/oliverames")!)
-                    }
-                    .buttonStyle(.bordered)
-                } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Support Development")
-                        Text("Ping Warden is open source, and everything except enabling Ping Protection is free. Donations made before the licensed release are honored as full licenses; email \(LicenseManager.donationConversionEmail) to claim yours.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
-            }
-
             Section {
                 Label("No Password Prompts", systemImage: "checkmark.shield")
                     .font(.subheadline)
@@ -2868,7 +2847,6 @@ private struct DiagnosticsResultView: View {
 // MARK: - About View
 
 struct AboutView: View {
-    @Environment(\.openURL) private var openURL
 
     @ScaledMetric(relativeTo: .largeTitle) private var heroIconSize: CGFloat = 64
 
@@ -2919,7 +2897,6 @@ struct AboutView: View {
                         aboutWebsiteLink
                         aboutDocumentationLink
                         aboutIssueLink
-                        aboutDonateButton
                     }
 
                     VStack(spacing: 8) {
@@ -2927,7 +2904,6 @@ struct AboutView: View {
                         aboutWebsiteLink
                         aboutDocumentationLink
                         aboutIssueLink
-                        aboutDonateButton
                     }
                 }
                 .buttonStyle(.link)
@@ -2980,12 +2956,6 @@ struct AboutView: View {
             Button("Buy a License") {
                 NSWorkspace.shared.open(LicenseManager.purchaseURL)
             }
-        }
-    }
-
-    private var aboutDonateButton: some View {
-        Button("Donate") {
-            openURL(URL(string: "https://buymeacoffee.com/oliverames")!)
         }
     }
 
