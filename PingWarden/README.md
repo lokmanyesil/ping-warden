@@ -333,10 +333,15 @@ cd PingWarden/PingWarden
 bash release.sh X.Y.Z ../../RELEASE_NOTES.md
 ```
 
-The command creates a fresh unsigned archive and dSYMs, validates and signs the
+Before it builds anything, the command rebuilds the website's generated pages
+under `Site/public` from `RELEASE_NOTES.md`, the READMEs, and the guides, and
+stops if the committed copies are out of step. The website deploys only when
+those pages match their sources, so a release that edits the notes must commit
+the rebuilt `Site/public/docs/releases.html` alongside the version bump. The
+release then creates a fresh unsigned archive and dSYMs, validates and signs the
 app, helper, and widget, notarizes and staples the app and DMG, mount-tests the
 DMG, signs the Sparkle archive and appcast, publishes the GitHub release and
-Sentry dSYMs, and updates `gh-pages`.
+Sentry dSYMs, updates `gh-pages`, and attaches the DMG to the Gumroad product.
 
 Release files: `PingWarden/PingWarden/release.sh`, `PingWarden/PingWarden/notarize.sh`, and `appcast.xml`.
 

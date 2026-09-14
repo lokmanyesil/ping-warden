@@ -7,6 +7,11 @@
 #  Usage: ./release.sh [version] [release-notes-file]
 #  Example: ./release.sh 2.1.1 release_notes_2.1.1.txt
 #
+#  Pre-flight rebuilds the generated website pages (Site/public) and stops if
+#  the committed copies are out of step with RELEASE_NOTES.md and the guides,
+#  so pingwarden.app/docs/releases cannot fall behind a release (#74).
+#  SKIP_SITE_CHECK=1 skips that check.
+#
 #  Beta releases: prefix the invocation with BETA_CHANNEL=1 to publish to
 #  appcast-beta.xml instead of the stable appcast.xml. Use semver beta tags
 #  in the version (e.g. 2.4.0-beta.1). The beta appcast lives on the same
@@ -188,6 +193,40 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# The website's pages are generated from RELEASE_NOTES.md, the READMEs, and
+# the guides, and the generated copies are committed under Site/public. The
+# Website workflow refuses to deploy when those copies drift from their
+# sources, so a release that edits the notes without rebuilding the site
+# leaves pingwarden.app/docs/releases stale; 4.1.7 shipped that way (#74).
+# Rebuild here, before anything irreversible, with the same commands the
+# workflow runs, and stop if the committed pages are out of step. The build
+# is deterministic, so a clean tree stays clean. SKIP_SITE_CHECK=1 opts out.
+SITE_DIR="$REPO_ROOT/Site"
+if [ "${SKIP_SITE_CHECK:-0}" = "1" ]; then
+    echo -e "${YELLOW}SKIP_SITE_CHECK=1 set; not verifying the generated site pages.${NC}"
+else
+    if ! command -v npm >/dev/null 2>&1; then
+        echo -e "${RED}Error: npm is required to verify the generated site pages under Site/public.${NC}" >&2
+        echo "Install Node.js, or set SKIP_SITE_CHECK=1 only if the Website workflow is already green for this commit." >&2
+        exit 1
+    fi
+    if [ ! -d "$SITE_DIR/node_modules" ]; then
+        echo "Installing Site dependencies from the lockfile..."
+        npm ci --prefix "$SITE_DIR" --no-audit --no-fund >/dev/null
+    fi
+    npm run build --prefix "$SITE_DIR" --silent
+    npm run check --prefix "$SITE_DIR" --silent >/dev/null
+    if ! git -C "$REPO_ROOT" diff --quiet -- Site/public \
+        || [ -n "$(git -C "$REPO_ROOT" ls-files --others --exclude-standard -- Site/public)" ]; then
+        echo -e "${RED}Error: the committed site pages under Site/public were out of step with their sources.${NC}" >&2
+        echo "The rebuild just regenerated them. Review the changes below, commit them with the release" >&2
+        echo "source, push, and rerun release.sh:" >&2
+        git -C "$REPO_ROOT" status --short -- Site/public >&2
+        exit 1
+    fi
+    echo -e "${GREEN}✓ Generated site pages match their sources${NC}"
+fi
 
 if [ -n "$(git -C "$REPO_ROOT" status --porcelain)" ]; then
     echo -e "${RED}Error: release worktree is not clean${NC}" >&2
