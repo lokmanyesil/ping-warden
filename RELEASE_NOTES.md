@@ -1,3 +1,37 @@
+# Ping Warden 4.1.8
+
+Latency Session recaps stay on the target you chose, a saved GeForce NOW target no longer drops to another server when you reopen the dashboard, and Ping Protection state set from Control Center is confirmed with the helper.
+
+## Fixes
+
+- Opening the dashboard during a Latency Session mixed samples from the dashboard's target into the session recap, which skewed its median, P95, jitter, and probe-failure numbers. Each sample now records the target it measured, and the recap counts only samples for the target the session started with.
+- With a GeForce NOW zone selected, each time the Dashboard or Targets pane opened the app fell back to another server and measured it until the zone list had been fetched again, which could take several seconds. Discovered zones are now remembered between openings and across launches, so the saved zone matches right away.
+- When the Control Center toggle or a Shortcut changed Ping Protection, the app adopted the new state from shared settings without asking the helper. It now confirms with the helper, so the menu cannot say Protected while the wireless interface is actually up.
+- The diagnostics snapshot's architecture line now reports arm64 or x86_64 instead of "available".
+
+## Improvements
+
+- Fewer background writes: the license check no longer rewrites its cached state every minute, and the hardware identifier it seals with is looked up once per launch rather than on every menu refresh.
+- The technical guide, Quick Start, and site guides were corrected. Transition reminders arrive when 30 and 7 days remain, not weekly; starting a Latency Session needs a license or an active transition because it turns Ping Protection on; and the Settings list now includes Targets.
+
+## New since 4.0
+
+If you are coming from 4.0, Game Mode auto-detect changed in 4.1.0 and works without any permission now.
+
+- Protection turns on when a game is the frontmost app, with no Screen Recording permission needed. A windowed GeForce NOW session triggers it the same as a fullscreen one.
+- Screen Recording stays optional. Granting it adds detection of fullscreen games sitting behind other windows.
+- Protection stays off while your Mac is on Ethernet, where AWDL cannot interfere, and engages again when you move back to Wi-Fi.
+
+Turn it on in Settings → Automation. [How Game Mode detection works](https://pingwarden.app/docs/setup).
+
+## Upgrading from a free version
+
+Ping Protection now requires a one-time $15 license. The dashboard, latency history, diagnostics, and updates stay free, and the source remains MIT.
+
+If you already had protection turned on with the helper approved, updating gives you a 90-day transition that starts at your first launch of version 4. That offer has no expiry date, so it is the same 90 days whenever you update. Later updates preserve your original deadline. Check the time remaining in Settings → License.
+
+Donations through Buy Me a Coffee before version 4 are honored as full licenses. See [pricing and transition details](https://pingwarden.app/docs/overview#pricing).
+
 # Ping Warden 4.1.7
 
 Game Mode auto-detect no longer drops protection when macOS puts a dialog over your game.
