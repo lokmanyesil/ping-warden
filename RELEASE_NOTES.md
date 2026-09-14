@@ -1,3 +1,29 @@
+# Ping Warden 4.1.9
+
+This update removes the old donation buttons and adds a way to revisit release notes after future updates.
+
+## Improvements
+
+- Removed the donation buttons from Settings and About. The License pane still explains how donors from before version 4 can claim their license.
+- Added a “What's New” item to the menu bar and Help menu when the app detects a version change. Opening it takes you to that version's release notes and dismisses the item. The first launch with this feature records a baseline, so the prompt begins with subsequent updates.
+
+## New since 4.0
+
+- Game Mode can detect a recognized frontmost game without Screen Recording permission. Optional Screen Recording access also enables fullscreen-window detection. Automatic activation skips Ethernet and rechecks when the network changes.
+- Latency Sessions record a protected game or call and produce a local recap. Starting a session requires a license or an active transition. The dashboard, diagnostics, and past recaps remain free.
+- Version 4.1.8 improved saved target restoration, session sample attribution, helper-state confirmation, and diagnostics.
+
+## Updating from an older version
+
+Version 2.0.5 and earlier need a manual download. Quit the app, download the latest DMG, replace the copy in Applications, and launch it there. Later versions can use Check for Updates.
+
+Ping Protection in the prebuilt app requires a one-time $15 license or an active transition. Eligible existing users receive 90 days from their first launch of version 4 with protection enabled and the helper approved. Later updates preserve that deadline. The source remains MIT-licensed.
+
+## Release maintenance
+
+- The release workflow now rebuilds and verifies the website before publishing.
+- Gumroad publication allows up to five minutes for upload processing before replacing buyer content.
+
 # Ping Warden 4.1.8
 
 Latency Session recaps stay on the target you chose, a saved GeForce NOW target no longer drops to another server when you reopen the dashboard, and Ping Protection state set from Control Center is confirmed with the helper.
