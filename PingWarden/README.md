@@ -133,6 +133,8 @@ Initial setup sequence:
 
 The design avoids recurring password prompts after the one-time approval step.
 
+The welcome appears automatically once. Dismissing it leaves the free dashboard usable without helper setup; **Settings → General → Finish Setup** and the menu bar protection action both resume the flow later.
+
 ## 8. Settings and UI Areas
 
 Settings sections:
@@ -335,6 +337,8 @@ app, helper, and widget, notarizes and staples the app and DMG, mount-tests the
 DMG, signs the Sparkle archive and appcast, publishes the GitHub release and
 Sentry dSYMs, and updates `gh-pages`.
 
+Release files: `PingWarden/PingWarden/release.sh`, `PingWarden/PingWarden/notarize.sh`, and `appcast.xml`.
+
 Important:
 
 - Appcast latest entry must match the intended newest version.
@@ -361,48 +365,20 @@ Recommended usage:
 - Keep update interval moderate unless actively investigating jitter.
 - Use diagnostics export before opening support issues.
 
-## 18. File Map
-
-Main application:
-
-- `PingWarden/PingWarden/PingWardenApp.swift`
-- `PingWarden/PingWarden/PingWardenMonitor.swift`
-- `PingWarden/PingWarden/DashboardView.swift`
-- `PingWarden/PingWarden/PingWardenPreferences.swift`
-
-Helper:
-
-- `PingWarden/PingWardenHelper/main.m`
-- `PingWarden/PingWardenHelper/PingWardenMonitor.h`
-- `PingWarden/PingWardenHelper/PingWardenMonitor.m`
-- `PingWarden/PingWardenHelper/com.amesvt.pingwarden.helper.plist`
-
-Release/update:
-
-- `appcast.xml`
-- `PingWarden/PingWarden/release.sh`
-- `PingWarden/PingWarden/notarize.sh`
-
-## 19. Related Documentation
+## 18. Related Documentation
 
 - [Quick Start](QUICKSTART.md)
 - [Troubleshooting](TROUBLESHOOTING.md)
 - [Repository Root README](../README.md)
 - [Release Notes](../RELEASE_NOTES.md)
 
-## 20. Credits
+## 19. Credits
 
 - [jamestut/awdlkiller](https://github.com/jamestut/awdlkiller)
 - [james-howard/AWDLControl](https://github.com/james-howard/AWDLControl), SMAppService and XPC architecture inspiration
 
-## 21. License and Pricing
+## 20. License and Pricing
 
-The welcome appears automatically once. Dismiss it to use the free dashboard without helper setup. To set up Ping Protection later, use **Settings → General → Finish Setup** or the menu bar protection action.
+Source code: MIT, Copyright (c) 2025-2026 Oliver Ames. Building from source under MIT does not require a license. See the repository [LICENSE](../LICENSE).
 
-The source code is MIT, Copyright (c) 2025-2026 Oliver Ames. You can build from source under MIT whether you buy a license or not. See the repository [LICENSE](../LICENSE).
-
-The prebuilt, signed, and notarized app is free to download. Everything except enabling Ping Protection is free to use. Enabling Ping Protection in the prebuilt app requires a one-time $15 license at [Gumroad](https://amesconsulting.gumroad.com/l/pingwarden). One key works on the Macs you own. The app verifies once with Gumroad, then re-checks roughly every 6 hours and at launch; verification is offline-friendly for up to 14 days.
-
-Why a license: After two years of free builds, donations cover only a fraction of the ongoing work — Developer ID signing, Apple notarization, testing across macOS releases, and release engineering. A one-time license for the Ping Protection feature makes that work sustainable without subscriptions, ads, or analytics. The source stays MIT and auditable.
-
-If protection was enabled with an approved helper when you first launched version 4, it remains available for 90 days from that launch. Updates preserve the original deadline. Check the time remaining in **Settings → License**. When the transition ends, enter a license key there to keep protection available. If you donated through [Buy Me a Coffee](https://www.buymeacoffee.com/oliverames) before version 4, email [oliver@ames.consulting](mailto:oliver@ames.consulting) with your receipt and it will be honored as a full license.
+Prebuilt app: free to download, with Ping Protection gated behind a one-time purchased key. Section 8.5 describes the License pane and the verification behavior the app implements. The [root README](../README.md#pricing) is the canonical statement of the price, the existing-user transition, and the donor path.

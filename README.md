@@ -66,7 +66,7 @@ Want to try the free features first? The same build is on [Releases](https://git
 
 ### 2. Activate your license
 
-Open **Settings → License** and enter the key from your receipt. The app verifies once with Gumroad and then works offline for up to 14 days. If you have an active transition, protection remains available until the deadline shown in that pane. If you donated through Buy Me a Coffee before version 4, email [oliver@ames.consulting](mailto:oliver@ames.consulting) with your receipt and it will be honored as a full license.
+Open **Settings → License** and enter the key from your receipt. The app verifies once with Gumroad and then works offline for up to 14 days. That pane also shows the deadline if you have an active transition. Existing users and pre-version-4 donors should read [Pricing](#pricing) first, since you may not need to buy anything yet.
 
 ### 3. Approve the helper
 
@@ -124,9 +124,9 @@ Diagnostics exports are written locally. Ping Warden never uploads them for you.
 
 ## Support Ping Warden
 
-The source stays MIT and you can build it yourself whether you buy anything or not. The prebuilt, signed, and notarized app is free to download and everything except enabling Ping Protection is free to use.
+Buying a [license](https://amesconsulting.gumroad.com/l/pingwarden) is the most direct way to support the work, and it is what unlocks Ping Protection in the prebuilt app. See [Pricing](#pricing) for the terms, the existing-user transition, and the donor path.
 
-If you supported Ping Warden on [Buy Me a Coffee](https://www.buymeacoffee.com/oliverames) before version 4, email [oliver@ames.consulting](mailto:oliver@ames.consulting) with your receipt and I'll honor it as a full license. New licenses are a one-time $15 at [Gumroad](https://amesconsulting.gumroad.com/l/pingwarden) and cover the Macs you own. Donations since version 4 still help with signing and testing. To activate Ping Protection, purchase the Gumroad license.
+Donations since version 4 through [Buy Me a Coffee](https://www.buymeacoffee.com/oliverames) still help with signing and testing, though they do not activate Ping Protection.
 
 ## Documentation
 
@@ -157,9 +157,7 @@ The app requires macOS 13 or newer. Configure signing for the app, helper, and w
 
 The source code is MIT, Copyright (c) 2025-2026 Oliver Ames — build it, inspect it, and modify it under MIT whether you buy a license or not. See [LICENSE](LICENSE) for the full terms.
 
-The prebuilt, signed, and notarized app is free to download. Everything except enabling Ping Protection is free to use. Enabling Ping Protection in the prebuilt app requires a one-time $15 license at [Gumroad](https://amesconsulting.gumroad.com/l/pingwarden). One key works on the Macs you own. The app verifies once with Gumroad, then works offline for up to 14 days.
-
-If protection was enabled with an approved helper when you first launched version 4, it remains available for 90 days from that launch. Updates preserve the original deadline. Check the time remaining in **Settings → License** and enter a license before it ends to keep protection available. If you donated before version 4, email [oliver@ames.consulting](mailto:oliver@ames.consulting) with your receipt and it will be honored as a license.
+The prebuilt, signed, and notarized app is free to download, and everything except enabling Ping Protection is free to use. Enabling Ping Protection in that build requires a purchased key. [Pricing](#pricing) covers what it costs, how verification works, and how the existing-user transition and donor path apply.
 
 ---
 
